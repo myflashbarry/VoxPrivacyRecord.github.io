@@ -161,16 +161,17 @@ async def upload_recording(
     # Validate parameters
     if language not in ["zh", "en"]:
         raise HTTPException(status_code=400, detail="Language must be 'zh' or 'en'")
-    if task_type not in ["pair", "extra_question"]:
-        raise HTTPException(status_code=400, detail="Task type must be 'pair' or 'extra_question'")
-    if role not in ["secret", "question"]:
-        raise HTTPException(status_code=400, detail="Role must be 'secret' or 'question'")
+    if task_type not in ["pair", "extra_question", "instruction"]:
+        raise HTTPException(status_code=400, detail="Task type must be 'pair', 'extra_question', or 'instruction'")
+    if role not in ["secret", "question", "nobody", "onlyme"]:
+        raise HTTPException(status_code=400, detail="Role must be 'secret', 'question', 'nobody', or 'onlyme'")
     
-    # Verify item exists in data
-    try:
-        data_loader.get_item_by_id(language, item_id)
-    except ValueError:
-        raise HTTPException(status_code=400, detail=f"Item {item_id} not found in {language} data")
+    # Verify item exists in data (skip for instruction tasks as they have different item_id format)
+    if task_type != "instruction":
+        try:
+            data_loader.get_item_by_id(language, item_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Item {item_id} not found in {language} data")
     
     # Generate filename
     filename = generate_filename(username, language, task_type, role, item_id)

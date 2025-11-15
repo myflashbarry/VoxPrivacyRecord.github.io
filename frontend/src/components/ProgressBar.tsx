@@ -60,15 +60,15 @@ export default function ProgressBar({ progress }: ProgressBarProps) {
       />
       
       <ProgressItem 
-        label="English Pairs (secret + question)" 
-        current={progress.en_pairs_done} 
-        total={20} 
-      />
-      
-      <ProgressItem 
         label="Extra Chinese Questions" 
         current={progress.zh_extra_questions_done} 
         total={10} 
+      />
+      
+      <ProgressItem 
+        label="English Pairs (secret + question)" 
+        current={progress.en_pairs_done} 
+        total={20} 
       />
       
       <ProgressItem 

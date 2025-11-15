@@ -86,11 +86,11 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       </form>
 
       <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '6px' }}>
-        <h3 style={{ marginBottom: '10px', fontSize: '1.1em' }}>What you'll do:</h3>
+        <h3 style={{ marginBottom: '10px', fontSize: '1.1em' }}>What you'll do (in order):</h3>
         <ul style={{ marginLeft: '20px', lineHeight: '1.8' }}>
           <li>Record <strong>20 Chinese pairs</strong> (secret + question)</li>
-          <li>Record <strong>20 English pairs</strong> (secret + question)</li>
           <li>Record <strong>10 additional Chinese questions</strong></li>
+          <li>Record <strong>20 English pairs</strong> (secret + question)</li>
           <li>Record <strong>10 additional English questions</strong></li>
         </ul>
         <p style={{ marginTop: '15px', color: '#666', fontSize: '0.9em' }}>

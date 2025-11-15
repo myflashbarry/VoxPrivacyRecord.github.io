@@ -75,8 +75,24 @@ def get_user_progress(db, username: str) -> dict:
     zh_extra = set()
     en_extra = set()
     
+    # Track instruction tasks
+    zh_nobody_done = set()
+    zh_onlyme_done = set()
+    en_nobody_done = set()
+    en_onlyme_done = set()
+    
     for rec in recordings:
-        if rec.task_type == "pair":
+        if rec.task_type == "instruction":
+            # For instructions, role contains 'nobody' or 'onlyme'
+            if rec.language == "zh" and rec.role == "nobody":
+                zh_nobody_done.add(rec.item_id)
+            elif rec.language == "zh" and rec.role == "onlyme":
+                zh_onlyme_done.add(rec.item_id)
+            elif rec.language == "en" and rec.role == "nobody":
+                en_nobody_done.add(rec.item_id)
+            elif rec.language == "en" and rec.role == "onlyme":
+                en_onlyme_done.add(rec.item_id)
+        elif rec.task_type == "pair":
             if rec.language == "zh":
                 if rec.item_id not in zh_pairs:
                     zh_pairs[rec.item_id] = {"secret": False, "question": False}
@@ -96,15 +112,23 @@ def get_user_progress(db, username: str) -> dict:
     en_pairs_done = sum(1 for p in en_pairs.values() if p["secret"] and p["question"])
     
     return {
+        "zh_nobody_done": len(zh_nobody_done),
+        "zh_onlyme_done": len(zh_onlyme_done),
         "zh_pairs_done": zh_pairs_done,
-        "en_pairs_done": en_pairs_done,
         "zh_extra_questions_done": len(zh_extra),
+        "en_nobody_done": len(en_nobody_done),
+        "en_onlyme_done": len(en_onlyme_done),
+        "en_pairs_done": en_pairs_done,
         "en_extra_questions_done": len(en_extra),
         # Also return incomplete pairs info for task manager
         "_zh_pairs_dict": zh_pairs,
         "_en_pairs_dict": en_pairs,
         "_zh_extra_items": zh_extra,
-        "_en_extra_items": en_extra
+        "_en_extra_items": en_extra,
+        "_zh_nobody_items": zh_nobody_done,
+        "_zh_onlyme_items": zh_onlyme_done,
+        "_en_nobody_items": en_nobody_done,
+        "_en_onlyme_items": en_onlyme_done
     }
 
 

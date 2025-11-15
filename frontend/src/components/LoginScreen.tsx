@@ -88,13 +88,17 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '6px' }}>
         <h3 style={{ marginBottom: '10px', fontSize: '1.1em' }}>What you'll do (in order):</h3>
         <ul style={{ marginLeft: '20px', lineHeight: '1.8' }}>
+          <li>Record <strong>5 Chinese warm-up sentences (Nobody)</strong></li>
+          <li>Record <strong>5 Chinese warm-up sentences (OnlyMe)</strong></li>
           <li>Record <strong>20 Chinese pairs</strong> (secret + question)</li>
           <li>Record <strong>10 additional Chinese questions</strong></li>
+          <li>Record <strong>5 English warm-up sentences (Nobody)</strong></li>
+          <li>Record <strong>5 English warm-up sentences (OnlyMe)</strong></li>
           <li>Record <strong>20 English pairs</strong> (secret + question)</li>
           <li>Record <strong>10 additional English questions</strong></li>
         </ul>
         <p style={{ marginTop: '15px', color: '#666', fontSize: '0.9em' }}>
-          Each pair consists of two recordings: one for the secret text, and one for the question about that secret.
+          You'll start with warm-up sentences before the main recording tasks. Each pair consists of two recordings: one for the secret text, and one for the question about that secret.
         </p>
       </div>
     </div>

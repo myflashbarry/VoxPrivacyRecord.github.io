@@ -42,10 +42,31 @@ class Settings(BaseSettings):
         return self.source_dir / "deepseek_secret_filter_results_filtered_en.jsonl"
     
     # Task quotas
+    zh_nobody_quota: int = 5
+    zh_onlyme_quota: int = 5
     zh_pairs_quota: int = 20
-    en_pairs_quota: int = 20
     zh_extra_quota: int = 10
+    en_nobody_quota: int = 5
+    en_onlyme_quota: int = 5
+    en_pairs_quota: int = 20
     en_extra_quota: int = 10
+    
+    # Instruction TXT files
+    @property
+    def zh_nobody_txt(self) -> Path:
+        return self.source_dir / "instruction_zh_nobody.txt"
+    
+    @property
+    def zh_onlyme_txt(self) -> Path:
+        return self.source_dir / "instruction_zh_onlyme.txt"
+    
+    @property
+    def en_nobody_txt(self) -> Path:
+        return self.source_dir / "instruction_en_nobody.txt"
+    
+    @property
+    def en_onlyme_txt(self) -> Path:
+        return self.source_dir / "instruction_en_onlyme.txt"
     
     class Config:
         env_file = ".env"

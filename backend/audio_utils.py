@@ -15,7 +15,7 @@ def generate_filename(username: str, language: str, task_type: str, role: str, i
     """
     Generate a standardized filename for audio recordings.
     
-    Format: user-{username}__lang-{zh|en}__type-{pair|extraQ}__role-{secret|question}__item-{item_id}__ts-{timestamp}.wav
+    Format: user-{username}__lang-{zh|en}__type-{pair|extraQ|instruction}__role-{secret|question|nobody|onlyme}__item-{item_id}__ts-{timestamp}.wav
     """
     # Sanitize username (remove special characters)
     safe_username = "".join(c if c.isalnum() or c in "-_" else "_" for c in username)
@@ -24,7 +24,14 @@ def generate_filename(username: str, language: str, task_type: str, role: str, i
     timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%S")
     
     # Map task_type to short form
-    type_short = "pair" if task_type == "pair" else "extraQ"
+    if task_type == "pair":
+        type_short = "pair"
+    elif task_type == "extra_question":
+        type_short = "extraQ"
+    elif task_type == "instruction":
+        type_short = "instruction"
+    else:
+        type_short = task_type
     
     filename = f"user-{safe_username}__lang-{language}__type-{type_short}__role-{role}__item-{item_id}__ts-{timestamp}.wav"
     

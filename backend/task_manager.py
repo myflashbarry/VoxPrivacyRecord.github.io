@@ -4,6 +4,7 @@ from typing import Optional, Dict, List
 from sqlalchemy.orm import Session
 from database import get_user_progress, get_user_recorded_items
 from data_loader import data_loader, DataItem
+from instruction_loader import instruction_loader
 from config import settings
 
 
@@ -15,43 +16,105 @@ class TaskManager:
         Determine the next task for a user based on their progress.
         
         Priority:
-        1. Complete pair quotas (zh and en)
-        2. Complete extra question quotas (zh and en)
+        1. zh_nobody instructions (5)
+        2. zh_onlyme instructions (5)
+        3. Chinese pairs (20)
+        4. Chinese extra questions (10)
+        5. en_nobody instructions (5)
+        6. en_onlyme instructions (5)
+        7. English pairs (20)
+        8. English extra questions (10)
         
         Returns None if all tasks are complete.
         """
         progress = get_user_progress(db, username)
         
         # Check if all tasks complete
-        if (progress["zh_pairs_done"] >= settings.zh_pairs_quota and
-            progress["en_pairs_done"] >= settings.en_pairs_quota and
+        if (progress["zh_nobody_done"] >= settings.zh_nobody_quota and
+            progress["zh_onlyme_done"] >= settings.zh_onlyme_quota and
+            progress["zh_pairs_done"] >= settings.zh_pairs_quota and
             progress["zh_extra_questions_done"] >= settings.zh_extra_quota and
+            progress["en_nobody_done"] >= settings.en_nobody_quota and
+            progress["en_onlyme_done"] >= settings.en_onlyme_quota and
+            progress["en_pairs_done"] >= settings.en_pairs_quota and
             progress["en_extra_questions_done"] >= settings.en_extra_quota):
             return None  # All done!
         
-        # Priority 1: Chinese pairs
+        # Priority 1: zh_nobody instructions
+        if progress["zh_nobody_done"] < settings.zh_nobody_quota:
+            task = self._assign_instruction_task(db, username, "zh", "nobody", progress)
+            if task:
+                return task
+        
+        # Priority 2: zh_onlyme instructions
+        if progress["zh_onlyme_done"] < settings.zh_onlyme_quota:
+            task = self._assign_instruction_task(db, username, "zh", "onlyme", progress)
+            if task:
+                return task
+        
+        # Priority 3: Chinese pairs
         if progress["zh_pairs_done"] < settings.zh_pairs_quota:
             task = self._assign_pair_task(db, username, "zh", progress)
             if task:
                 return task
         
-        # Priority 2: Chinese extra questions
+        # Priority 4: Chinese extra questions
         if progress["zh_extra_questions_done"] < settings.zh_extra_quota:
             task = self._assign_extra_question_task(db, username, "zh", progress)
             if task:
                 return task
         
-        # Priority 3: English pairs
+        # Priority 5: en_nobody instructions
+        if progress["en_nobody_done"] < settings.en_nobody_quota:
+            task = self._assign_instruction_task(db, username, "en", "nobody", progress)
+            if task:
+                return task
+        
+        # Priority 6: en_onlyme instructions
+        if progress["en_onlyme_done"] < settings.en_onlyme_quota:
+            task = self._assign_instruction_task(db, username, "en", "onlyme", progress)
+            if task:
+                return task
+        
+        # Priority 7: English pairs
         if progress["en_pairs_done"] < settings.en_pairs_quota:
             task = self._assign_pair_task(db, username, "en", progress)
             if task:
                 return task
         
-        # Priority 4: English extra questions
+        # Priority 8: English extra questions
         if progress["en_extra_questions_done"] < settings.en_extra_quota:
             task = self._assign_extra_question_task(db, username, "en", progress)
             if task:
                 return task
+        
+        return None
+    
+    def _assign_instruction_task(self, db: Session, username: str, language: str, inst_type: str, progress: Dict) -> Optional[Dict]:
+        """
+        Assign an instruction task (nobody or onlyme) for the given language.
+        
+        inst_type: 'nobody' or 'onlyme'
+        """
+        # Get the set of already recorded instruction items for this type
+        items_key = f"_{language}_{inst_type}_items"
+        recorded_items = progress.get(items_key, set())
+        
+        # Get user's assigned instructions for this type
+        full_inst_type = f"{language}_{inst_type}"
+        instructions = instruction_loader.get_user_instructions(username, full_inst_type, count=5)
+        
+        # Find next instruction to record (not yet recorded)
+        for idx, text in instructions:
+            item_id = f"{full_inst_type}_{idx}"
+            if item_id not in recorded_items:
+                return {
+                    "language": language,
+                    "task_type": "instruction",
+                    "role": inst_type,  # 'nobody' or 'onlyme'
+                    "item_id": item_id,
+                    "text": text
+                }
         
         return None
     

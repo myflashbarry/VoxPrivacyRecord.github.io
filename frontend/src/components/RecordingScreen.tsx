@@ -84,6 +84,12 @@ export default function RecordingScreen({ username, initialProgress, onLogout }:
 
   const getTaskDescription = (task: Task) => {
     const langName = task.language === 'zh' ? 'Chinese' : 'English';
+    
+    if (task.task_type === 'instruction') {
+      const warmupType = task.role === 'nobody' ? 'Nobody' : 'OnlyMe';
+      return `${langName} Warm-up - ${warmupType}`;
+    }
+    
     const roleDesc = task.role === 'secret' ? 'Secret Text' : 'Question';
     const typeDesc = task.task_type === 'pair' ? 'Pair' : 'Extra Question';
     return `${langName} ${typeDesc} - ${roleDesc}`;
@@ -98,9 +104,13 @@ export default function RecordingScreen({ username, initialProgress, onLogout }:
           <br /><br />
           You have successfully completed all recording tasks:
           <ul style={{ marginTop: '10px', marginLeft: '20px' }}>
+            <li>5 Chinese warm-up (Nobody)</li>
+            <li>5 Chinese warm-up (OnlyMe)</li>
             <li>20 Chinese pairs (secret + question)</li>
-            <li>20 English pairs (secret + question)</li>
             <li>10 extra Chinese questions</li>
+            <li>5 English warm-up (Nobody)</li>
+            <li>5 English warm-up (OnlyMe)</li>
+            <li>20 English pairs (secret + question)</li>
             <li>10 extra English questions</li>
           </ul>
         </div>

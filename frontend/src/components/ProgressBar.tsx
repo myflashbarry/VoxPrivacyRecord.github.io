@@ -38,11 +38,15 @@ const ProgressItem = ({ label, current, total }: { label: string; current: numbe
 
 export default function ProgressBar({ progress }: ProgressBarProps) {
   const totalCompleted = 
+    progress.zh_nobody_done +
+    progress.zh_onlyme_done +
     progress.zh_pairs_done + 
-    progress.en_pairs_done + 
     progress.zh_extra_questions_done + 
+    progress.en_nobody_done +
+    progress.en_onlyme_done +
+    progress.en_pairs_done + 
     progress.en_extra_questions_done;
-  const totalRequired = 20 + 20 + 10 + 10; // 60 total tasks
+  const totalRequired = 5 + 5 + 20 + 10 + 5 + 5 + 20 + 10; // 80 total tasks
 
   return (
     <div style={{
@@ -54,6 +58,18 @@ export default function ProgressBar({ progress }: ProgressBarProps) {
       <h2 style={{ marginBottom: '20px', fontSize: '1.3em' }}>Your Progress</h2>
       
       <ProgressItem 
+        label="Chinese Warm-up (Nobody)" 
+        current={progress.zh_nobody_done} 
+        total={5} 
+      />
+      
+      <ProgressItem 
+        label="Chinese Warm-up (OnlyMe)" 
+        current={progress.zh_onlyme_done} 
+        total={5} 
+      />
+      
+      <ProgressItem 
         label="Chinese Pairs (secret + question)" 
         current={progress.zh_pairs_done} 
         total={20} 
@@ -63,6 +79,18 @@ export default function ProgressBar({ progress }: ProgressBarProps) {
         label="Extra Chinese Questions" 
         current={progress.zh_extra_questions_done} 
         total={10} 
+      />
+      
+      <ProgressItem 
+        label="English Warm-up (Nobody)" 
+        current={progress.en_nobody_done} 
+        total={5} 
+      />
+      
+      <ProgressItem 
+        label="English Warm-up (OnlyMe)" 
+        current={progress.en_onlyme_done} 
+        total={5} 
       />
       
       <ProgressItem 

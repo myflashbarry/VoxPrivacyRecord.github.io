@@ -10,6 +10,7 @@ from pathlib import Path
 from config import settings
 from database import init_db, get_db, User, Recording, get_user_progress
 from data_loader import data_loader
+from instruction_loader import instruction_loader
 from task_manager import task_manager
 from audio_utils import generate_filename, convert_to_wav, check_ffmpeg_installed
 
@@ -40,6 +41,11 @@ async def startup_event():
     
     print(f"Loaded {len(data_loader.zh_items)} Chinese items")
     print(f"Loaded {len(data_loader.en_items)} English items")
+    
+    print(f"Loaded {len(instruction_loader.instructions.get('zh_nobody', []))} zh_nobody instructions")
+    print(f"Loaded {len(instruction_loader.instructions.get('zh_onlyme', []))} zh_onlyme instructions")
+    print(f"Loaded {len(instruction_loader.instructions.get('en_nobody', []))} en_nobody instructions")
+    print(f"Loaded {len(instruction_loader.instructions.get('en_onlyme', []))} en_onlyme instructions")
     
     if not check_ffmpeg_installed():
         print("WARNING: ffmpeg is not installed! Audio conversion will fail.")

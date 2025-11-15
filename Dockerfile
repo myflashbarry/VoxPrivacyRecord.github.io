@@ -16,9 +16,9 @@ COPY backend/ /app/
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port (Render will override this)
-EXPOSE 8000
+# Expose port (Render will use $PORT)
+EXPOSE 10000
 
-# Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application using PORT environment variable
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-10000}"]
 

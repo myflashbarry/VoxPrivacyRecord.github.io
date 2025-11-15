@@ -16,9 +16,26 @@ class Settings(BaseSettings):
     recordings_dir: Path = base_dir / "recordings"
     db_path: Path = base_dir / "db.sqlite3"
     
-    # JSONL data files (relative to backend directory)
-    zh_jsonl_path: Path = base_dir.parent / "source" / "deepseek_secret_filter_results_filtered_zh.jsonl"
-    en_jsonl_path: Path = base_dir.parent / "source" / "deepseek_secret_filter_results_filtered_en.jsonl"
+    # JSONL data files (auto-detect: Docker vs local)
+    # In Docker: /app/source/ (copied by Dockerfile)
+    # In local: ../source/ (relative to backend/)
+    _source_dir_docker: Path = base_dir / "source"
+    _source_dir_local: Path = base_dir.parent / "source"
+    
+    @property
+    def source_dir(self) -> Path:
+        # Check if Docker source exists, otherwise use local
+        if self._source_dir_docker.exists():
+            return self._source_dir_docker
+        return self._source_dir_local
+    
+    @property  
+    def zh_jsonl_path(self) -> Path:
+        return self.source_dir / "deepseek_secret_filter_results_filtered_zh.jsonl"
+    
+    @property
+    def en_jsonl_path(self) -> Path:
+        return self.source_dir / "deepseek_secret_filter_results_filtered_en.jsonl"
     
     # Task quotas
     zh_pairs_quota: int = 20

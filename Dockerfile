@@ -10,6 +10,9 @@ RUN apt-get update && \
 # Set working directory
 WORKDIR /app
 
+# Copy source data files first
+COPY source/ /app/source/
+
 # Copy backend files
 COPY backend/ /app/
 

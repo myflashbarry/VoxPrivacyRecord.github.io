@@ -1,12 +1,10 @@
 services:
   - type: web
     name: voxprivacy-backend
-    runtime: python
-    buildCommand: "apt-get update && apt-get install -y ffmpeg && cd backend && pip install -r requirements.txt"
-    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    env: docker
+    region: oregon
+    plan: free
     envVars:
       - key: API_CORS_ORIGINS
         value: https://myflashbarry.github.io
-      - key: PYTHON_VERSION
-        value: 3.10.0
 

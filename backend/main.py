@@ -278,6 +278,7 @@ async def download_all_recordings():
     import tempfile
     from fastapi.responses import FileResponse
     import os
+    from datetime import datetime
     
     recordings_path = settings.recordings_dir
     
@@ -289,31 +290,23 @@ async def download_all_recordings():
     if not wav_files:
         raise HTTPException(status_code=404, detail="No recordings found")
     
-    # Create a temporary zip file
-    with tempfile.NamedTemporaryFile(mode='w+b', suffix='.zip', delete=False) as tmp_file:
-        zip_path = tmp_file.name
-        
-        with zipfile.ZipFile(tmp_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for audio_file in wav_files:
-                # Add file to zip with just the filename (not full path)
-                zipf.write(audio_file, audio_file.name)
+    # Create zip file in data directory (persistent)
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    zip_filename = f'recordings_{timestamp}.zip'
+    zip_path = settings.data_dir / zip_filename
     
-    # Return the zip file and schedule cleanup
-    response = FileResponse(
-        path=zip_path,
+    # Create the zip file
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for audio_file in wav_files:
+            # Add file to zip with just the filename (not full path)
+            zipf.write(audio_file, audio_file.name)
+    
+    # Return the zip file
+    return FileResponse(
+        path=str(zip_path),
         media_type='application/zip',
         filename=f'voxprivacy_recordings_{len(wav_files)}_files.zip'
     )
-    
-    # Clean up temp file after response
-    @response.background
-    async def cleanup():
-        try:
-            os.unlink(zip_path)
-        except:
-            pass
-    
-    return response
 
 
 if __name__ == "__main__":

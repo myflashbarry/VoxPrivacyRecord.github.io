@@ -13,8 +13,12 @@ class Settings(BaseSettings):
     
     # File paths
     base_dir: Path = Path(__file__).parent
-    recordings_dir: Path = base_dir / "recordings"
-    db_path: Path = base_dir / "db.sqlite3"
+    
+    # Use persistent disk if available (Render: /app/data), otherwise local
+    data_dir: Path = Path("/app/data") if Path("/app/data").exists() else base_dir
+    
+    recordings_dir: Path = data_dir / "recordings"
+    db_path: Path = data_dir / "db.sqlite3"
     
     # JSONL data files (auto-detect: Docker vs local)
     # In Docker: /app/source/ (copied by Dockerfile)

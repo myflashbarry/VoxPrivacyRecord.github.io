@@ -26,7 +26,7 @@ jobs:
       - name: Create production env file
         run: |
           cd frontend
-          echo "VITE_API_BASE_URL=https://voxprivacy-backend.onrender.com" > .env.production
+          echo "VITE_API_BASE_URL=https://voxprivacyrecord-github-io.onrender.com" > .env.production
       
       - name: Build frontend
         run: |

@@ -35,15 +35,15 @@ class TaskManager:
             if task:
                 return task
         
-        # Priority 2: English pairs
-        if progress["en_pairs_done"] < settings.en_pairs_quota:
-            task = self._assign_pair_task(db, username, "en", progress)
+        # Priority 2: Chinese extra questions
+        if progress["zh_extra_questions_done"] < settings.zh_extra_quota:
+            task = self._assign_extra_question_task(db, username, "zh", progress)
             if task:
                 return task
         
-        # Priority 3: Chinese extra questions
-        if progress["zh_extra_questions_done"] < settings.zh_extra_quota:
-            task = self._assign_extra_question_task(db, username, "zh", progress)
+        # Priority 3: English pairs
+        if progress["en_pairs_done"] < settings.en_pairs_quota:
+            task = self._assign_pair_task(db, username, "en", progress)
             if task:
                 return task
         
